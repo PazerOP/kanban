@@ -10,7 +10,6 @@ import {
 	removeTaskDependency,
 	trashTaskAndGetReadyLinkedTaskIds,
 } from "@/state/board-state";
-import { trackTaskDependencyCreated, trackTasksAutoStartedFromDependency } from "@/telemetry/events";
 import type { BoardCard, BoardColumnId, BoardData } from "@/types";
 import { getNextDetailTaskIdAfterTrashMove } from "@/utils/detail-view-task-order";
 
@@ -87,7 +86,6 @@ export function useLinkedBacklogTaskActions({
 				const latestResult = addTaskDependency(currentBoard, fromTaskId, toTaskId);
 				return latestResult.added ? latestResult.board : currentBoard;
 			});
-			trackTaskDependencyCreated();
 		},
 		[setBoard],
 	);
@@ -160,9 +158,6 @@ export function useLinkedBacklogTaskActions({
 							startedTaskCount += 1;
 						}
 					}
-				}
-				if (startedTaskCount > 0) {
-					trackTasksAutoStartedFromDependency(startedTaskCount);
 				}
 			}
 
