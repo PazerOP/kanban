@@ -20,8 +20,7 @@ import type { BasicLogger } from "@clinebot/shared";
 import { resolveClineDataDir } from "@clinebot/shared/storage";
 import { CLINE_BUILTIN_SLASH_COMMANDS } from "./cline-slash-commands";
 
-export { createSessionHost, LoggerTelemetryAdapter } from "@clinebot/core";
-export { createConfiguredTelemetryService } from "@clinebot/core/telemetry/opentelemetry";
+export { createSessionHost } from "@clinebot/core";
 
 export type ClineSdkSessionHost = SessionHost;
 export type ClineSdkStartSessionInput = StartSessionInput;

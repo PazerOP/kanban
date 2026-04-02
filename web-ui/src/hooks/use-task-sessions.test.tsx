@@ -6,8 +6,6 @@ import { useTaskSessions } from "@/hooks/use-task-sessions";
 import type { BoardCard } from "@/types";
 
 const startTaskSessionMutateMock = vi.hoisted(() => vi.fn());
-const trackTaskResumedFromTrashMock = vi.hoisted(() => vi.fn());
-
 vi.mock("@/runtime/trpc-client", () => ({
 	getRuntimeTrpcClient: () => ({
 		runtime: {
@@ -20,10 +18,6 @@ vi.mock("@/runtime/trpc-client", () => ({
 
 vi.mock("@/runtime/task-session-geometry", () => ({
 	estimateTaskSessionGeometry: () => ({ cols: 120, rows: 40 }),
-}));
-
-vi.mock("@/telemetry/events", () => ({
-	trackTaskResumedFromTrash: trackTaskResumedFromTrashMock,
 }));
 
 interface HookSnapshot {
@@ -65,7 +59,6 @@ describe("useTaskSessions", () => {
 
 	beforeEach(() => {
 		startTaskSessionMutateMock.mockReset();
-		trackTaskResumedFromTrashMock.mockReset();
 		startTaskSessionMutateMock.mockResolvedValue({
 			ok: true,
 			summary: {
@@ -125,31 +118,7 @@ describe("useTaskSessions", () => {
 			await latestSnapshot?.startTaskSession(createTask(), { resumeFromTrash: true });
 		});
 
-		expect(trackTaskResumedFromTrashMock).toHaveBeenCalledTimes(1);
-	});
-
-	it("does not track regular task starts", async () => {
-		let latestSnapshot: HookSnapshot | null = null;
-
-		await act(async () => {
-			root.render(
-				<HookHarness
-					onSnapshot={(snapshot) => {
-						latestSnapshot = snapshot;
-					}}
-				/>,
-			);
-		});
-
-		if (latestSnapshot === null) {
-			throw new Error("Expected a hook snapshot.");
-		}
-
-		await act(async () => {
-			await latestSnapshot?.startTaskSession(createTask());
-		});
-
-		expect(trackTaskResumedFromTrashMock).not.toHaveBeenCalled();
+		expect(startTaskSessionMutateMock).toHaveBeenCalledTimes(1);
 	});
 
 	it("forwards start-in-plan-mode from the task card when starting a task", async () => {
